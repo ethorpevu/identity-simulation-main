@@ -53,7 +53,7 @@ async def list_personas():
     personas_list = []
     for name, config in PERSONAS.items():
         personas_list.append(PersonaInfo(
-            name=config["name"],
+            name=name,
             display_name=config["display_name"],
             description=config["description"],
             moral_foundations_profile=config["moral_foundations_profile"],
