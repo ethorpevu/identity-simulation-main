@@ -94,7 +94,7 @@ async def generate_persona_response(
                 {"role": "user", "content": user_prompt}
             ],
             max_completion_tokens=2500,
-            temperature=0.7
+            temperature=1
         )
 
         # Extract text content
