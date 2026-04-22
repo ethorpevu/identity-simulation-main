@@ -1,3 +1,5 @@
+#All credit to Mark Williams, @willmj3
+
 # Group Identity Simulation Platform
 
 A research-grade web application for simulating how political messages propagate through different worldviews, grounded in social psychology research.
