@@ -93,7 +93,7 @@ async def generate_persona_response(
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
             ],
-            max_tokens=2500,
+            max_completion_tokens=2500,
             temperature=0.7
         )
 
