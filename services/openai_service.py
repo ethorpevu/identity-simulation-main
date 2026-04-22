@@ -88,7 +88,7 @@ async def generate_persona_response(
 
     try:
         response = client.chat.completions.create(
-            model="gpt-4",  # or "gpt-3.5-turbo" for cost savings
+            model="gpt-5",  # or "gpt-3.5-turbo" for cost savings
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
