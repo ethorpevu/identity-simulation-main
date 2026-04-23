@@ -84,41 +84,98 @@ async def generate_persona_response(
         Parsed response dict
     """
     system_prompt = persona_config["system_prompt"]
+
+    # Truncate very long system prompts to prevent token limit issues
+    if len(system_prompt) > 3000:
+        system_prompt = system_prompt[:3000] + "\n\n[Prompt truncated for length]"
+
     user_prompt = build_user_prompt(message, context_type)
 
     try:
         response = client.chat.completions.create(
-            model="gpt-5",  # or "gpt-3.5-turbo" for cost savings
+            model="gpt-5.4-nano",  # Use GPT-5.4-nano for better JSON formatting
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
             ],
-            max_completion_tokens=2500,
-            temperature=1
+            max_completion_tokens=1500,  # Reduced to ensure complete responses within limits
+            temperature=1  # Lower temperature for more consistent JSON output
         )
+    except Exception as api_error:
+        # If GPT-4 fails, try with GPT-3.5-turbo as fallback
+        print(f"GPT-4 failed: {str(api_error)}, trying GPT-3.5-turbo")
+        try:
+            response = client.chat.completions.create(
+                model="gpt-5.1-mini",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ],
+                max_completion_tokens=1500,
+                temperature=1
+            )
+        except Exception as fallback_error:
+            # Return error response if both models fail
+            return {
+                "receptivity_score": 50,
+                "initial_reaction": f"API Error: {str(api_error)}",
+                "emotional_response": f"Failed to generate response: {str(fallback_error)}",
+                "moral_foundations_analysis": {
+                    "care_harm": "Unable to analyze",
+                    "fairness_cheating": "Unable to analyze",
+                    "loyalty_betrayal": "Unable to analyze",
+                    "authority_subversion": "Unable to analyze",
+                    "sanctity_degradation": "Unable to analyze",
+                    "liberty_oppression": "Unable to analyze"
+                },
+                "concerns": ["API failure"],
+                "what_resonates": [],
+                "barriers_to_persuasion": ["Technical error"],
+                "trust_factors": "Unable to assess",
+                "suggested_reframings": [],
+                "identity_protective_reasoning": "Unable to analyze",
+                "authentic_voice_response": "Sorry, I encountered an error generating a response."
+            }
 
-        # Extract text content
-        response_text = response.choices[0].message.content.strip()
+    # Extract text content
+    response_text = response.choices[0].message.content.strip()
 
-        # Try to parse JSON
-        # Handle potential markdown code blocks
-        if response_text.startswith("```"):
-            # Extract content between code blocks
-            lines = response_text.split("\n")
-            json_lines = []
-            in_block = False
-            for line in lines:
-                if line.startswith("```"):
-                    in_block = not in_block
-                    continue
-                if in_block or not line.startswith("```"):
-                    json_lines.append(line)
-            response_text = "\n".join(json_lines)
+    # Handle potential markdown code blocks and clean up response
+    if response_text.startswith("```"):
+        # Extract content between code blocks
+        lines = response_text.split("\n")
+        json_lines = []
+        in_block = False
+        for line in lines:
+            if line.startswith("```"):
+                in_block = not in_block
+                continue
+            if in_block:
+                json_lines.append(line)
+        response_text = "\n".join(json_lines).strip()
+    elif response_text.startswith("```json"):
+        # Handle ```json blocks
+        response_text = response_text.replace("```json", "").replace("```", "").strip()
 
+    # Clean up common formatting issues
+    response_text = response_text.strip()
+    if response_text.startswith("json"):
+        response_text = response_text[4:].strip()
+    if response_text.startswith("\n"):
+        response_text = response_text[1:].strip()
+
+    # Try to find JSON object if response contains extra text
+    start_idx = response_text.find("{")
+    end_idx = response_text.rfind("}")
+    if start_idx != -1 and end_idx != -1 and end_idx > start_idx:
+        response_text = response_text[start_idx:end_idx+1]
+
+    try:
         parsed_response = json.loads(response_text)
         return parsed_response
-
     except json.JSONDecodeError as e:
+        # Log the raw response for debugging
+        print(f"JSON parsing failed for persona. Raw response: {response_text[:1000]}...")
         # Return a structured error response
         return {
             "receptivity_score": 50,
@@ -139,27 +196,6 @@ async def generate_persona_response(
             "suggested_reframings": [],
             "identity_protective_reasoning": "Unable to analyze",
             "authentic_voice_response": f"Raw response: {response_text[:500]}..."
-        }
-    except Exception as e:
-        return {
-            "receptivity_score": 50,
-            "initial_reaction": f"Error: {str(e)}",
-            "emotional_response": "API error occurred",
-            "moral_foundations_analysis": {
-                "care_harm": "Unable to analyze",
-                "fairness_cheating": "Unable to analyze",
-                "loyalty_betrayal": "Unable to analyze",
-                "authority_subversion": "Unable to analyze",
-                "sanctity_degradation": "Unable to analyze",
-                "liberty_oppression": "Unable to analyze"
-            },
-            "concerns": [f"API error: {str(e)}"],
-            "what_resonates": [],
-            "barriers_to_persuasion": ["Technical error"],
-            "trust_factors": "Unable to assess",
-            "suggested_reframings": [],
-            "identity_protective_reasoning": "Unable to analyze",
-            "authentic_voice_response": "An error occurred while generating the response."
         }
 
 async def generate_all_persona_responses(
@@ -193,8 +229,34 @@ async def generate_all_persona_responses(
     # Execute all tasks concurrently
     results = {}
     if tasks:
-        responses = await asyncio.gather(*tasks.values())
-        for name, response in zip(tasks.keys(), responses):
-            results[name] = response
+        completed_tasks = await asyncio.gather(*tasks.values(), return_exceptions=True)
+
+        # Map results back to persona names
+        for i, name in enumerate(tasks.keys()):
+            result = completed_tasks[i]
+            if isinstance(result, Exception):
+                # Handle exceptions in individual tasks
+                results[name] = {
+                    "receptivity_score": 50,
+                    "initial_reaction": f"Task failed: {str(result)}",
+                    "emotional_response": "Error occurred",
+                    "moral_foundations_analysis": {
+                        "care_harm": "Unable to analyze",
+                        "fairness_cheating": "Unable to analyze",
+                        "loyalty_betrayal": "Unable to analyze",
+                        "authority_subversion": "Unable to analyze",
+                        "sanctity_degradation": "Unable to analyze",
+                        "liberty_oppression": "Unable to analyze"
+                    },
+                    "concerns": ["Task execution failed"],
+                    "what_resonates": [],
+                    "barriers_to_persuasion": ["Technical error"],
+                    "trust_factors": "Unable to assess",
+                    "suggested_reframings": [],
+                    "identity_protective_reasoning": "Unable to analyze",
+                    "authentic_voice_response": "An error occurred while processing this persona."
+                }
+            else:
+                results[name] = result
 
     return results
