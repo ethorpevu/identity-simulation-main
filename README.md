@@ -1,3 +1,5 @@
+#README OUT OF DATE -- TO BE UPDATED
+
 #All credit to Mark Williams, @willmj3
 
 # Group Identity Simulation Platform
