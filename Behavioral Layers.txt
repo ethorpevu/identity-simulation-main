@@ -1,0 +1,1134 @@
+BEHAVIORAL LAYERS
+A Four-Layer Psychological Model for Constructing Environmental Personas
+=========================================================================
+
+Version: 2.2 (expanded from the original 4-layer draft; original preserved as "Behavioral Layers - original draft.txt")
+Date: 2026-10-08
+Revision note: v2.1 incorporates (a) a line-by-line fact-check of every number and citation against the 8 source PDFs
+and (b) a design critique for operational gaps. Changes: unified 5-band scale; rule tags split into HARD / SOFT / POP;
+evidence tags added; generative procedure, response-style block, message-response protocol, population quotas, and
+parameter registry added; Cultural Theory restored as two axes, including the hierarchical-individualist quadrant
+from the original draft.
+Revision note v2.2 (2026-10-15): added Stern (2000) (habit, ABC, four causal types, organizational behavior) and
+Kahan's cultural cognition (K07, K12, K12H; Dake 1991). Political identity made a standard parameter (L2.P9);
+PRESENT-DAY is the default era. Generation re-based on ideological groups derived from current U.S. survey data (new
+Section 13); population quotas demoted to sanity checks.
+Companion document: "Persona System.txt" (turns this model into persona system prompts).
+
+
+-------------------------------------------------------------------------
+0. PURPOSE, SCOPE, AND CONVENTIONS
+-------------------------------------------------------------------------
+
+0.1 Purpose
+This document specifies the psychological architecture every simulated persona must embody: four causal layers, the
+parameters that describe a persona at each layer, the empirical relationships between layers, and the rules that
+separate a realistic person from an implausible or over-coherent one. It is the single source of truth for the Persona
+System. Every field in a persona specification, and every section of a persona system prompt, should trace back to a
+numbered element here.
+
+0.2 Scope
+Environmental values, beliefs, norms, and behavior of adult members of the general public. Grounded in the source corpus
+listed in Section 12 (Schwartz value theory; Stern et al. Value-Belief-Norm theory; Dunlap et al. revised NEP; Tarrant
+& Cordell attitude-behavior correspondence). Where the corpus is silent, the document says so (Section 11) rather than
+inventing findings.
+ROLE OF CORPUS VS. DATA (v2.2): the corpus supplies the theoretical STRUCTURE: the layers, causal order, signs of
+effects, and the mechanisms of message response. Current U.S. survey data supply ideological-group profiles and effect
+MAGNITUDES (Section 13). Personas represent ideological groups for message tailoring; matching population prevalence is
+not a goal.
+
+0.3 Conventions
+- Layers L1-L4. Non-psychological contextual inputs: CX. Survey response style: RS.
+- Every parameter has a stable ID (e.g., L1.P2). Every rule has a stable ID (e.g., L3.R4). The Persona System refers to
+  these IDs; do not renumber, only append.
+- RULE STRENGTH TAGS
+    [HARD]  Per-persona constraint. Never violate unless the persona spec records an explicit justification.
+    [SOFT]  Per-persona tendency. Violations are allowed and expected at realistic rates (Section 10).
+    [POP]   Population quota. Checked across the whole persona set, not for any single persona.
+- EVIDENCE TAGS
+    (E)  Directly reported in the corpus (citation given).
+    (I)  Inference, interpretation, or design choice by this document. Keep it, but treat it as revisable.
+- UNIFIED SCALE. Unless stated otherwise, every ordinal parameter uses five bands:
+    VL (very low) | L (low) | M (moderate) | H (high) | VH (very high)
+  Bands are ABSOLUTE and population-referenced: by default, each band holds roughly a quintile of the reference
+  population, except where Section 10.4 sets a different distribution (I).
+- VOLATILITY TAGS (used in Appendix A): STATIC (fixed for the life of the persona), SLOW (can move at most one band per
+  session, only through lived experience), DYNAMIC (can update within a conversation per Section 9).
+- VISIBILITY TAGS (used in Appendix A): HIDDEN (drives behavior; never named in a prompt) vs. EXPRESSED (rendered in
+  the prompt as natural-language life content).
+- Citation codes are in Section 12. Page numbers are journal page numbers.
+- Effect sizes come from modest, mostly U.S. samples. Data were collected 1976-1995 and published 1986-2000. Two corpus
+  papers (SKDG95 and SDG95) analyze the SAME 1993 Fairfax County dataset (N = 199) and are not independent
+  replications. SDB86 is a convenience sample of 74 students. Treat all numbers as calibration targets, not laws.
+
+
+-------------------------------------------------------------------------
+1. MODEL OVERVIEW
+-------------------------------------------------------------------------
+
+1.1 Why four layers, not five or six
+The literature collapses naturally into four layers.
+- AC (Awareness of Consequences), AR (Ascription of Responsibility), and the personal norm (PN) are treated as one
+  appraisal mechanism with three internal stages (I).
+  - The evidence is a chain of strong adjacent links. In VBN99 the immediately antecedent variable "had a very strong
+    direct effect" at each step NEP -> AC -> PN [VBN99 p.90] (E).
+  - AR was not measured in VBN99. In SDB86, AR predicted norms for industry but not for government [SDB86 p.215] (E).
+  - Grouping all three as a single layer is therefore a modeling choice, not a demonstrated finding.
+- Cultural Theory's worldview grid sits at the same causal depth as the NEP. Both are generalized worldview beliefs,
+  neither values nor issue-specific judgments. They are merged into one worldview layer (I).
+
+1.2 Causal chain
+
+    CX  Social position, resources, constraints, culture, era  --------------------------+
+         |  (shapes early socialization)                                                  |
+         v                                                                                |
+    L1  CORE VALUE ORIENTATION        most stable; trait-like                             |
+         |                                                                                |
+         v                                                                                |
+    L2  GENERALIZED WORLDVIEW         NEP (nature) + Cultural Theory (social order)       |
+         |                            + source trust + political identity                                    |
+         v                                                                                |
+    L3  NORM ACTIVATION               AC -> AR -> Personal Norm (+ salience, efficacy,    |
+         |                            identity)                                           |
+         v                                                                                v
+    L4  BEHAVIORAL TRANSLATION        consumer | policy approval | personal sacrifice/WTP |
+                                      citizenship | activism; gated by cost, capability,
+                                      and opportunity (CX acts again here)
+
+    RS  RESPONSE STYLE (orthogonal)   how the persona reports the above when surveyed
+
+1.3 Structural principles
+- ADJACENCY. The strongest effects run between adjacent layers. Generate each layer mainly from the layer directly above
+  it [VBN99 pp.87, 90; SDG95 p.726] (E).
+- LEAKAGE. Distal layers also have smaller direct effects further down. For example, values directly affect citizenship
+  and demonstrating, bypassing norms [VBN99 Table 1, p.88] (E).
+- STABILITY GRADIENT. Higher layers change less easily.
+  - Values are shaped in preadult socialization and are "relatively resistant to being reshaped by information"
+    [SKDG95 p.1615] (E).
+  - Worldview shifts with era and major experience [DVMJ00 p.437] (E).
+  - L3 responds to information and framing (E/I).
+  - L4 responds to immediate cost and context (E/I).
+- FILTERING. Values and worldview filter incoming information: congruent information is more likely to shape beliefs
+  [SDG95 p.726] (E). Opponents of environmental claims may be "just as predisposed to believe contrary claims"
+  [SKDG95 p.1626] (E).
+- FEEDBACK. Behavior can feed back into beliefs over time [SDG95 p.726] (E). This applies to longitudinal simulations
+  only.
+- PARTIAL DETERMINATION. No layer is fully determined by the one above. See Section 10 for residual variance targets.
+- CAUSAL ORDER IS ASSUMED. The data are cross-sectional, and the causal order is theoretical
+  [VBN99 pp.87, 90; SDG95 pp.728, 739] (E). The model uses it as a generative order, not as a proven mechanism.
+
+
+-------------------------------------------------------------------------
+2. LAYER 1: CORE VALUE ORIENTATION
+-------------------------------------------------------------------------
+
+2.1 Definition
+The stable, pre-political motivational substrate a person brings to any environmental question, before any specific
+belief is formed.
+
+Values are "concepts or beliefs" about "desirable end states or behaviors" that "transcend specific situations, guide
+selection or evaluation of behavior and events, and are ordered by relative importance" [SB87 p.551; S92 p.4] (E).
+
+This layer sets baseline receptivity: whether an environmental appeal reads as consonant with the persona's goals or as
+a threat to them. It is the most fixed, trait-like parameter in a persona.
+
+2.2 The Schwartz circumplex
+Ten motivational types are arranged in a circle. Adjacent types are compatible; opposing types conflict
+[S92 pp.14-15] (E). The circle runs: Self-Direction - Stimulation - Hedonism - Achievement - Power - Security -
+Conformity/Tradition - Benevolence - Universalism, then back to Self-Direction. Tradition sits outside Conformity in a
+shared wedge [S92 pp.27, 39-40] (E).
+
+    Type            Goal (abridged from S92 pp.5-12)                            Example items
+    --------------  ----------------------------------------------------------  ------------------------------------------
+    Self-Direction  independent thought and action; choosing, creating          freedom, creativity, independent, curious
+    Stimulation     excitement, novelty, challenge                              varied life, exciting life, daring
+    Hedonism        pleasure, sensuous gratification for oneself                pleasure, enjoying life
+    Achievement     personal success by demonstrating competence (social        ambitious, successful, capable, influential
+                    standards)
+    Power           status, prestige, control over people and resources         authority, wealth, social power
+    Security        safety, harmony, stability of society, relationships, self  social order, family security, national
+                                                                                security
+    Conformity      restraint of actions likely to upset others or violate      obedient, self-discipline, politeness
+                    norms
+    Tradition       respect for and acceptance of cultural/religious customs    respect for tradition, humble, devout
+    Benevolence     welfare of people in frequent personal contact (in-group)   helpful, loyal, forgiving, honest
+    Universalism    understanding, tolerance, protection of all people and      social justice, equality, protecting the
+                    nature                                                      environment, unity with nature
+
+Two higher-order bipolar dimensions [S92 pp.43-44] (E). Both appeared in all 40 samples, with fewer than 1% of items
+crossing to the opposing pole:
+- SELF-TRANSCENDENCE (Universalism + Benevolence) vs. SELF-ENHANCEMENT (Power + Achievement; Hedonism partly)
+- OPENNESS TO CHANGE (Self-Direction + Stimulation; Hedonism partly) vs. CONSERVATION (Security + Conformity + Tradition)
+
+Hedonism straddles Openness and Self-Enhancement [S92 p.44] (E).
+
+Environmental anchor: the three nature items (protecting the environment, unity with nature, a world of beauty) fall
+"with great consistency" in the Universalism region [S92 p.39] (E).
+
+2.3 Environmental translation: value orientations
+The original draft used three orientations: egoistic, biospheric-altruistic, and traditional. Openness is added here
+because VBN99 and SKDG95 measured it. Its effects are near-null except for a small positive link to demonstrating.
+- BIOSPHERIC-ALTRUISTIC (BIO-ALT) ≈ Self-Transcendence. In U.S. general-population data, concern for people and concern
+  for nature load on ONE factor. Top loadings are unity with nature (.81), protecting the environment (.81), preventing
+  pollution (.74), respecting the earth (.74), a world at peace (.69), equality (.64), and social justice (.59)
+  [SKDG95 Table 1, p.1619] (E). Biospheric and social-altruistic values may separate in more environmentalist
+  populations, such as students [VBN99 p.85] (E).
+- EGOISTIC (EGO) ≈ Self-Enhancement: social power, wealth, authority, influential (E).
+- TRADITIONAL (TRAD) ≈ Conservation. CAUTION: VBN99's "traditional" scale also contains Benevolence items (true
+  friendship, loyal, forgiving, honest) [VBN99 Appendix p.95] (E). Its effects therefore partly reflect in-group
+  Benevolence. TRAD lowered NEP (b = -.23) and AC (b = -.11) in VBN99 [Table 1] (E). It had no significant direct
+  effect on behavioral intentions in SKDG95 [Table 3, p.1623] (E).
+- OPENNESS (OPEN): near-null on most outcomes; small positive link to demonstrating [VBN99 Table 1] (E).
+
+2.4 Parameters
+L1.P1  Value profile shape (used for generation)
+       - Peak region: the 1-3 adjacent types ranked highest.
+       - Trough region: the 1-3 adjacent types ranked lowest.
+       - Differentiation: L / M / H. How sharply the persona's priorities are ranked.
+       S92 speculates, without testing it, that value types may be less distinct in less-educated samples
+       [S92 pp.47-48] (E). Lower differentiation for low-education personas is a design option (I).
+L1.P2  Value profile scores (used for output and audit). Importance of each of the 10 types on the SVS metric: -1
+       (opposed to my values), 0 (not important) to 7 (of supreme importance) [S92 pp.16-17] (E). Derive these from
+       P1. Personal mean rating level is a response style (RS.P3), not a value; partial it out [S92 p.56] (E).
+L1.P3  Orientation levels (5 bands, absolute, population-referenced): BIO-ALT, EGO, TRAD, OPEN. Derived from P1/P2,
+       never set independently. Absolute bands allow population calibration (Section 10.4); P1 carries the persona's
+       internal ranking.
+L1.P4  Benevolence-vs-Universalism focus: In-group (close others) / Balanced / Universal (all people and nature).
+L1.P5  (Optional) Biospheric vs. social-altruistic split. Use only for activist, student, or strongly environmentalist
+       personas. Default: a single BIO-ALT score.
+
+2.5 Rules
+L1.R1 [HARD] (E) Priorities are relative. A value matters only by its rank against the persona's other values. Trade-offs
+      define the persona. Never write a profile in which "everything matters a lot" [SB87 p.561; S92 p.4].
+L1.R2 [SOFT] (I) Profile smoothness heuristic. Importance should generally fall off with distance around the circle from
+      the peak region. One secondary bump is allowed. This is a design heuristic inspired by the circumplex; S92 shows
+      the structure across people, not a rule for individual profiles.
+L1.R3 [SOFT, rare ≤5% of personas] (E/I) Opposing poles rarely share the top. Opposing types correlate negatively in
+      every sample [S92 pp.36, 43-44] (E). Any Self-Transcendence type top-ranked together with any Self-Enhancement
+      type, or any Openness type top-ranked together with any Conservation type, is atypical relative to the persona's
+      own mean. S92 notes structure is distinct from priority [p.47], so this is a rarity rule, not a prohibition (I).
+L1.R4 [SOFT] (E/I) Plausible blends are neighbors: Universalism + Self-Direction; Benevolence + Conformity; Security +
+      Power; Power + Achievement; Hedonism + Stimulation [S92 Table V, p.35] (E). Hedonism may pair with Openness or
+      with Self-Enhancement [S92 p.44] (E).
+L1.R5 [HARD] (E/I) Keep Benevolence distinct from Universalism. S92 hypothesizes that conventional religiosity and
+      collectivism go with Benevolence rather than Universalism [S92 pp.12, 39] (E). A persona can be devoted to family
+      and neighbors without universalist environmental concern. Caring for close others does not imply
+      environmentalism (I).
+L1.R6 [SOFT] (E) Edge types polarize more. Tradition and Power sit at the edge of the value space, so they conflict more
+      sharply with their opposites than Conformity or Achievement do [S92 pp.40-41].
+L1.R7 [SOFT] (E/I) Sinusoid rule for external correlates. Anything related to one value type relates similarly to its
+      neighbors and in reverse to its opposites [S92 p.54] (E). Applied here: pro-environmental attitude peaks near
+      Universalism, stays high at Benevolence and Self-Direction, and is lowest at Power and Achievement (I).
+L1.R8 [SOFT] (E) Spirituality is not its own axis. It is expressed through Benevolence/Universalism or through Tradition
+      [S92 p.38]. Belief that nature is sacred is handled at L2.P4.
+L1.R9 [SOFT] (I) Value trade-off resolution. When a message pits two of the persona's values against each other (e.g.,
+      "environment vs. jobs" pits Universalism against Security/Achievement), the higher-ranked value wins. When the two
+      are close in rank, the persona expresses visible ambivalence. This is consistent with priorities as relative
+      importance [SB87 p.561].
+
+2.6 Stability
+STATIC. Messages can make a value SALIENT through framing; they cannot change its importance. Values can be challenged
+only on desirability, not truth [SDG95 pp.727-728] (E).
+
+2.7 Persona System Hook (L1)
+- Supplies the persona's "what matters most to me" core: the peak region and trough region, expressed as lived
+  priorities and recurring trade-offs.
+- Supplies the persona's affective reaction to appeals. An appeal to a top value feels consonant. An appeal that
+  threatens a top value, or invokes a bottom value, feels dissonant or irrelevant.
+- Never expressed as labels ("I score high on Universalism").
+
+
+-------------------------------------------------------------------------
+3. LAYER 2: GENERALIZED WORLDVIEW (NATURE + SOCIAL ORDER)
+-------------------------------------------------------------------------
+
+3.1 Definition
+Values are too abstract to generate an opinion about a specific policy. They first crystallize into two generalized
+worldview beliefs:
+(a) ECOLOGICAL WORLDVIEW (NEP). Is nature fragile and near its limits, or resilient and abundant? Are humans exempt from
+    natural constraints? Is ecological catastrophe plausible? The NEP is a "folk ecological theory" [VBN99 p.85;
+    SDG95 pp.726, 738] (E).
+(b) SOCIAL-ORDER WORLDVIEW (Cultural Theory). How should society be organized? Is collective or government action
+    legitimate?
+This layer supplies the persona's default PLAUSIBILITY filter (how credible a new environmental claim is) and
+LEGITIMACY filter (how legitimate collective or government intervention is) before the content of any specific claim
+is weighed (I; the "filter" framing belongs to this document).
+
+3.2 Empirical basis
+- NEP is nearly indistinguishable from general awareness of consequences: r = .785 with a 10-item General AC scale, and
+  the combined 17-item scale has alpha .88 [SDG95 pp.735-736] (E). It predisposes acceptance of more specific AC
+  beliefs [VBN99 p.85] (E).
+- Values predict NEP only moderately: R² = .26 [VBN99 Table 1] and .37 [SDG95 Table 5] (E).
+  - BIO-ALT is positive: b = .41 [VBN99]; .46 [SDG95].
+  - EGO is negative: -.06 [VBN99]; -.26 [SDG95].
+  - TRAD is negative: -.23 [VBN99]; -.20 [SDG95].
+  - OPEN is not significant.
+- In a joint factor analysis, NEP items mostly formed their own factor, distinct from values. One item ("balance of
+  nature strong enough") loaded with egoistic values [SDG95 p.734] (E).
+- Cultural Theory (VBN99, Dake measures; 2-item scales with low reliability, alpha .36-.67 [p.87]) (E):
+  - Individualism is negative for willingness to sacrifice (b = -.189) and citizenship (-.079); marginal for consumer
+    behavior (-.122, t = -1.70); null for demonstrating [VBN99 Table 2, p.89].
+  - Fatalists, and unexpectedly egalitarians, show less citizenship. Hierarchy was non-significant in every model
+    [VBN99 Table 2; p.90].
+  - Together with post-materialism and sacredness of nature, Cultural Theory added ΔR² = .033 (consumer), .033
+    (sacrifice), and .091 (citizenship) beyond VBN [VBN99 Table 3, p.90]. Post-materialism predicted nothing.
+- Cultural cognition (v2.2) (E):
+  - Two continuous, roughly orthogonal axes: HIERARCHY-EGALITARIANISM (grid) and INDIVIDUALISM-COMMUNITARIANISM
+    (group).
+    - Short form: 6 balanced items per axis; alpha .84 and .76 [K12H pp.730-732].
+    - Kahan drops fatalism and models quadrants as interactions, not types [K12H pp.734-738].
+    - Dake's separate unipolar scales were unreliable (Hierarchy-Individualism r = .54) [D91 p.74; K12H pp.729-730].
+  - Environmental and climate risk: hierarchy and individualism each independently LOWER perceived risk.
+    - Climate risk, 0-10 scale: hierarchy b = -.46, individualism b = -.30.
+    - Hierarchical individualists (HI) M = 3.15 vs. egalitarian communitarians (EC) M = 7.4 [K12 p.733].
+    - Hierarchy was the single largest predictor of environmental risk perception [K07 pp.482-485].
+  - Mechanism: IDENTITY-PROTECTIVE COGNITION. People appraise information so as to protect beliefs tied to group
+    belonging, in both heuristic and systematic reasoning [K07 p.470; K12H p.740].
+    - HI personas dismiss environmental risk because accepting it implies restricting commerce (individualism) and
+      impugns the competence of elites (hierarchy) [K07 p.469].
+  - Worldview is not the same as party.
+    - Worldviews outpredicted party plus ideology for environmental risk; party and ideology explained less than half
+      as much variance [K07 pp.483-484].
+    - The HI-EC gap exceeds the conservative-Republican vs. liberal-Democrat gap [K12 p.733].
+    - Left-right ideology cannot separate hierarchy from individualism [D91 p.75].
+  - Science literacy and numeracy AMPLIFY polarization: r = +.08 among EC, -.12 among HI [K12 p.733].
+  - Gender and race effects run through worldview. The environmental "white-male effect" is attributable to
+    hierarchical white men [K07 p.485].
+  - The original draft's HIERARCHICAL-INDIVIDUALIST, who treats regulation as illegitimate interference regardless of
+    perceived harm, is now grounded in the corpus: it is the HI quadrant, and its mechanism is identity-protective
+    cognition (E).
+
+3.3 NEP facets (revised NEP, 15 items [DVMJ00 p.433]) (E)
+The pro-NEP response is in brackets. Percentages are the share giving the pro-NEP answer in the 1990 Washington State
+sample.
+- LIMITS TO GROWTH
+  - 1 approaching population limit [agree] ~53%
+  - 6 plenty of resources if we learn to develop them [disagree] ~29%
+  - 11 earth like a spaceship [agree] ~74%
+- ANTI-ANTHROPOCENTRISM
+  - 2 humans have right to modify nature [disagree] ~58%
+  - 7 plants/animals have as much right [agree] ~77%
+  - 12 humans meant to rule nature [disagree] ~58%
+- FRAGILITY OF NATURE'S BALANCE
+  - 3 interference often disastrous [agree] ~82%
+  - 8 balance strong enough to cope [disagree] ~80%
+  - 13 balance delicate [agree] ~79%
+- REJECTION OF EXEMPTIONALISM
+  - 4 ingenuity will keep earth livable [disagree] ~47%
+  - 9 humans still subject to laws of nature [agree] ~91%
+  - 14 humans will learn to control nature [disagree] ~53%
+- ECO-CRISIS
+  - 5 humans severely abusing environment [agree] ~87%
+  - 10 crisis greatly exaggerated [disagree] ~64%
+  - 15 major catastrophe coming [agree] ~65%
+Items 2, 7, and 12 express norms about relative rights rather than beliefs about the world [SDG95 p.725] (E). Dunlap
+et al. recommend a single summated scale, but report that dimensionality is sample-specific [DVMJ00 pp.431, 435] (E).
+
+3.4 Parameters
+L2.P1  NEP overall: 5 bands. Map bands to the revised 15-item scale (range 15-75) using the population distribution in
+       L2.R3.
+L2.P2  NEP facet profile: a band for each of the five facets. Facets need not be uniform (L2.R4).
+L2.P3  Belief-system coherence: L / M / H. How consistent the persona's facet positions are with each other.
+       "Populations vary in terms of how well their belief systems are organized into coherent frameworks"
+       [DVMJ00 p.431] (E).
+L2.P4  Nature-sacredness: none / theistic ("God's creation") / intrinsic ("sacred in itself"). Both forms predicted
+       consumer behavior; only intrinsic sacredness predicted citizenship [VBN99 Table 2; pp.90-91] (E).
+L2.P5  Cultural worldview (Kahan cultural cognition; v2.2) (E): two continuous axes, 5 bands each.
+       - GROUP: VL = strongly individualist ... VH = strongly communitarian
+       - GRID:  VL = strongly hierarchical  ... VH = strongly egalitarian
+       Quadrant effects are interactions, not types [K12H]. An optional Fatalism flag (Y/N) is retained from VBN99
+       (lower citizenship); Kahan omits fatalism. Hierarchy means support for stratified social order and traditional
+       authority. It does NOT imply trust in experts: hierarchs discount experts whose findings are uncongenial
+       (L2.R10).
+L2.P6  Legitimacy of collective action (5 bands). Derivation: lower with stronger Individualism, and lower with
+       Hierarchy; higher with Communitarian and Egalitarian positions; Fatalism lowers perceived
+       usefulness (I). Also specify the preferred means: market / government / community / personal / none.
+L2.P7  Movement stance (5 bands): attitude toward environmentalists and environmental groups as social actors.
+       Derivation: tracks NEP and identity (L3.P5) but is pulled down by Individualism and Hierarchy. It can be
+       negative even with NEP at M or above (L2.R5) (I).
+L2.P8  Source trust profile: a band for each of scientists, government agencies, industry/business, environmental
+       groups, news media, and personal network/local knowledge. Derived from P5-P7 and CX (I). This parameter is
+       required for message response (Section 9).
+L2.P9  Political identity (v2.2): party ID and lean, partisan strength, ideology (liberal-conservative), and identity
+       content (trusted partisan media, feelings toward the other side).
+       - Correlated with L2.P5 but distinct from it (L2.R12).
+       - In the present-day U.S., it is a major driver of L2-L3 and of source trust.
+       - Its weights are ESTIMATED FROM SURVEY DATA (Section 13), not from the corpus. The corpus correlations
+         (r = .22-.32, DVMJ00 p.436) are outdated.
+
+3.5 Rules
+L2.R1 [HARD] (E) NEP is generated mainly from BIO-ALT (+), EGO (-), and TRAD (-). OPEN has near-zero effect. A
+      persona with high EGO, high TRAD, and low BIO-ALT should not hold a VH NEP without a recorded reason (for example,
+      lived experience; see L2.R7).
+L2.R2 [SOFT] (E) Values explain only about 25-40% of NEP. Personas with identical values can differ substantially in
+      worldview.
+L2.R3 [POP] (E) Population distribution, corpus calibration era.
+      - Dunlap et al. report pro-NEP pluralities on the items [DVMJ00 p.434]. Item 6 is an exception in Table 1:
+        about 59% agree that resources are plentiful.
+      - The distribution is negatively skewed, with a long thin anti-NEP tail. In the SDG95 7-item NEP: skew -0.84,
+        10 cases at least 2 SD below the mean, none more than 1.5 SD above [SDG95 note 5, p.741].
+      - Reference mean: 44.3 on the original 12-item scale (range 12-60), from a Southern Appalachian quota sample
+        that was half rural and 61% female [TC97 p.627]. That is about 3.7 per item, roughly 55 of 75 on the revised
+        scale if the instruments were comparable (I).
+      - Default band shares for NEP: VL 5%, L 15%, M 30%, H 35%, VH 15% (I).
+      - An evenly split or bimodal persona set is unrealistic for the corpus era (see CX.P0 for the era setting).
+L2.R4 [SOFT] (E) Facet texture.
+      - Most pro-NEP: Balance (items 3, 8, 13; ~80%), item 5 (87%), and item 9 (91%).
+      - Middling: the other eco-crisis items (10, 15; ~65%).
+      - Most ambivalent: Limits and Exemptionalism. More than 20% answered "Unsure" on items 1, 4, and 14.
+      - Item 6 usually gets the anti-NEP answer [DVMJ00 Table 1, p.434].
+      - Many low-NEP personas still endorse near-consensus items, e.g., "humans are severely abusing the environment"
+        (I).
+L2.R5 [SOFT] (E) "Broad public support for environmental protection mixed with sharp criticism of the environmental
+      movement" is a realistic, common profile [SDG95 note 5, p.741]. L2.P7 can be low while L2.P1 is M or H.
+L2.R6 [SOFT] (E/I) Lower coherence (L2.P3) is typical for lower-education or low-engagement personas. Their facet
+      positions can be inconsistent with each other, and their NEP predicts behavior weakly (L4.R6).
+L2.R7 [SOFT] (E) Lived experience can move worldview. An NEP increase was significant only in Kentucky counties that
+      experienced water restrictions (Arcury & Christianson 1990, cited in DVMJ00 p.437): "critical environmental
+      experience can accelerate change in environmental worldview." A local flood, drought, or contamination event is a
+      legitimate reason for a worldview that runs ahead of values.
+L2.R8 [SOFT] (E/I) Individualism depresses support. Strong Individualist personas show lower willingness to sacrifice
+      and less citizenship (E), and somewhat lower consumer behavior (E, marginal). Resistance to government-led action
+      specifically is an inference (I).
+L2.R9 [SOFT] (E/I) Worldview shapes perception of the FACTS, not just policy preference. Hierarchical and individualist
+      personas tend to doubt environmental risk claims themselves [K12 p.733] (E). Some can still accept a specific,
+      local harm (NEP/AC H) while rejecting regulation as illegitimate (I; see T6, T8).
+L2.R10 [SOFT] (E) Identity-protective cognition. Personas weigh evidence and experts by cultural congeniality. An
+      expert is judged credible mainly when the expert's position matches the persona's predisposition, and each
+      worldview group perceives the scientific consensus as being on its side [K12H pp.746-749].
+L2.R11 [SOFT] (E) Science literacy and numeracy (CX.P2) strengthen worldview-consistent reasoning. They do not produce
+      convergence [K12 p.733].
+L2.R12 [HARD] (E/I) Worldview and party are distinct. Party and ideology (L2.P9) correlate with worldview but do not
+      determine it. Within-party variation in worldview must be represented [K07 pp.483-484; K12 p.733; D91 p.75].
+
+3.6 Stability
+SLOW. Worldview moves over years, with era, and with lived experience.
+- Era: from 1976 to 1990, eco-crisis items rose 10-18 points while limits items fell 3-6 points [DVMJ00 Table 3] (E).
+- Within a session, NEP moves at most one band, and only through vivid personal experience. Arguments alone can soften
+  or harden expression, but not the band (I).
+
+3.7 Persona System Hook (L2)
+- Supplies the persona's assumptions about how the world works:
+  - nature: resilient vs. fragile; human ingenuity vs. natural limits
+  - society: who should fix problems, and whether government intervention is legitimate.
+- Supplies the default credibility the persona gives to environmental claims and to each kind of claimant (L2.P8).
+- Expressed as intuitions and everyday reasoning ("we always figure something out"; "nature bounces back"; "you can't
+  keep taking without consequences"), never as scale labels.
+
+
+-------------------------------------------------------------------------
+4. LAYER 3: NORM ACTIVATION (THREAT APPRAISAL + RESPONSIBILITY + OBLIGATION)
+-------------------------------------------------------------------------
+
+4.1 Definition
+This is the engine that converts a specific message or issue into felt obligation, or into dismissal. It requires two
+beliefs to both be present:
+- AWARENESS OF CONSEQUENCES (AC): belief that a condition threatens something the person values. The threatened object
+  can be the self and family, other people, or the biosphere, weighted by L1 [VBN99 p.83; SKDG95 p.1614] (E).
+- ASCRIPTION OF RESPONSIBILITY (AR): whether some actor is causally responsible and able to fix the harm.
+  - Originally defined for the self [VBN99 p.83; SDB86 p.206] (E).
+  - Extended to industry and government [SDB86 pp.207-209] (E).
+
+When both are present, a PERSONAL NORM (PN) activates: a felt "I am obligated to act." It is tied to the persona's
+self-expectations, with pride when it is honored and guilt when it is violated [VBN99 p.83, note 4 p.92] (E).
+
+PN is "the only variable" with a direct effect on all three kinds of non-activist support. It was "by far the strongest
+predictor" of consumer behavior and willingness to sacrifice [VBN99 p.89] (E). For citizenship, AC was about as strong
+as PN.
+
+Values also appear to work upstream as a filter on evidence. Egoistic and traditional values go with denying that human
+activity harms nature [SKDG95 p.1625] (E, cross-sectional). Whether this is direct motivated disbelief or mediated is
+left open in the source.
+
+This layer turns a specific message into a specific felt obligation, or the absence of one. It is where message framing
+and content actually get evaluated.
+
+4.2 Decision rule
+Norm activation follows a "fairly simple rule: if I discern that one of my values is threatened and if I believe my
+actions can alleviate the threat, I am obligated by my value structure to act" [VBN99 note 5, p.92] (E).
+
+People consider only a few salient values and consequences [SKDG95 p.1615] (E). FRAMING therefore strongly determines
+which values are engaged. The effect is largest for "emergent attitude objects": unfamiliar issues on which the
+persona has no crystallized attitude, so it builds one on the spot from values and general beliefs [SKDG95 title;
+pp.1614-1615] (E).
+
+4.3 Parameters
+L3.P1  AC by object (5 bands each):
+       - AC-ego: threat to me, my family, my health
+       - AC-soc: threat to other people, my community, my country
+       - AC-bio: threat to other species, ecosystems, the biosphere
+L3.P2  AC by issue (optional): 5 bands per issue (e.g., climate, local water, forests, toxics). The VBN99 AC scale
+       crosses 3 problems with 3 objects [pp.87, 95-96] (E).
+L3.P3  AR by actor (5 bands each): AR-self, AR-industry, AR-government.
+L3.P4  Personal norm (PN) strength (5 bands), with sub-norms for personal, government, and business obligation
+       [VBN99 p.96] (E).
+L3.P5  Environmentalist identity: None / Sympathizer / Identified / Core.
+       - Activists hold the movement as "a central element in their identity" [VBN99 p.82] (E).
+       - Identity's role in activism is speculative in the source [VBN99 p.89] (E: "it seems likely").
+       - Its operationalization here is (I).
+L3.P6  Self-efficacy (5 bands): whether the persona believes its own actions can make a difference. Kept separate from
+       AR-self, because a persona can feel responsible yet believe nothing it does matters (I). Implied by the
+       "believe my actions can alleviate" clause of the decision rule (E).
+L3.P7  Issue salience/engagement (5 bands): how often the persona thinks about environmental issues at all, and where
+       the environment ranks among its concerns (job, family, health, costs). (I) For the population default, see
+       Section 10.4: mostly VL-M. Real people rarely put the environment at the center of their lives.
+L3.P8  Attitude crystallization per issue: Crystallized / Partial / Emergent. Emergent issues are the most sensitive to
+       framing and source (E: SKDG95 framework; per-issue coding is I).
+
+4.4 Empirical anchors
+VBN99 Table 1 (U.S. national RDD, 1994, N = 420; unstandardized b) (E):
+- AC <- NEP .515, BIO-ALT .257, TRAD -.108 (R² = .48)
+- PN <- NEP .336, AC .262, BIO-ALT .076 (R² = .56). NEP has the larger direct effect on PN.
+- AR was not measured. In theory AC is prior to AR: "only when someone is aware of harmful consequences does
+  responsibility ... become a moral issue" [SDB86 p.210] (E).
+
+SKDG95 (Fairfax County, 1993, N = 199) (E):
+- AC-bio and AC-ego each independently predict willingness to act. Perceived risk to the biosphere is "at least as
+  strong" a predictor as risk to self [Table 3; p.1626].
+- BIO-ALT raises all three AC types (R² .24-.35). EGO lowers AC-bio (-.290) and does NOT raise AC-ego [Table 4,
+  p.1625].
+
+Institutional asymmetry [SDB86 pp.215, 218] (E). Caveat: 74 undergraduates, scale alphas .35-.64; the authors call it
+preliminary.
+- Industry: AR-industry strongly predicts the norm that industry must act. Blame drives obligation.
+- Government: AR-government does NOT predict government norms. People see government as obligated to act whether or not
+  government caused the problem. The label "strict liability" is this document's analogy (I).
+- Higher concern goes with blaming industry [p.218].
+
+Framing battleground (E):
+- Industries minimize hazards (AC) and deflect responsibility ("lifestyles"); environmental groups do the opposite
+  [SDB86 p.219].
+- Mobilizing frames identify threats to innocents and responsible parties [SDB86 p.206], and lead potential converts to
+  see themselves as personally responsible [SDB86 p.220].
+- AC, AR, and PN parallel the diagnostic, prognostic, and motivational stages of framing [VBN99 p.84].
+
+4.5 Rules
+L3.R1 [HARD] (E) No norm without consequences. A strong PN or high AR with VL AC is not allowed [SDB86 p.210].
+L3.R2 [SOFT] (E/I) AC tends to move as a block, because BIO-ALT raises all three types (E). The common exception: AC-ego
+      H with AC-bio L, a health- or family-focused persona who doubts ecological harm (I).
+L3.R3 [SOFT] (E) Value-driven denial. High EGO + high TRAD + low BIO-ALT personas tend to deny harm to nature (low
+      AC-bio), not merely rank it as a low priority [SKDG95 p.1625].
+      [HARD] (I) When a persona denies, it must give reasons in its own idiom: counter-claims, distrust of sources,
+      personal observation, economic or community concerns. Bare indifference or a caricature is not allowed.
+L3.R4 [SOFT] (E/I) Egoistic values are not a shortcut to concern. EGO does not raise AC-ego (E). Self-interested
+      personas become concerned only when harm to themselves is concrete, local, and credible (I).
+L3.R5 [SOFT] (E, student sample) AR is asymmetric across actors. A persona can believe "government must fix this"
+      without blaming government, and can blame industry without feeling personally responsible.
+L3.R6 [SOFT] (E/I) PN is the hub. It is generated mostly from NEP and AC, with a small direct BIO-ALT effect (E). About
+      44% of PN variance is unexplained (R² = .56), so the AC-PN mismatch is real (E). AC drives PN in proportion to
+      how much the persona values the threatened object: AC-bio motivates only to the degree BIO-ALT is important (I;
+      consistent with SKDG95's value-weighted framework, pp.1614-1615).
+L3.R7 [SOFT] (E/I) Identity is separate from the norm. Identity usually requires PN at H or above, but most strong-PN
+      personas are Sympathizers, not activists. Only 7% demonstrated [VBN99 p.88] (E); the mapping to identity is (I).
+L3.R8 [SOFT] (I) Neutralization under cost. When a requested action is personally costly (L4.P3), personas with
+      moderate PN often lower their own AR ("my bit won't matter"; "industry is the real problem") or efficacy, rather
+      than accept the obligation. Denial grows with cost. This is consistent with Schwartz's norm-activation theory, on
+      which SDB86 builds, but untested in the corpus.
+L3.R9 [SOFT] (I) Salience gates expression. Low-salience personas (L3.P7 VL-L) have thin, uncrystallized views, give
+      shorter answers, and are more influenced by framing. That does not make them more persuadable on crystallized
+      issues.
+
+4.6 Stability
+DYNAMIC. This is the layer where persuasion acts.
+- AC can rise with credible, value-congruent, concrete (especially local) information. It is resisted when the
+  information conflicts with L1/L2 (filtering) (E/I).
+- AR can shift with responsibility framing ("this company caused it"; "your choices add up") (E/I).
+- PN is expected to shift mainly through AC and NEP (E: VBN99 Table 1). AR is theorized to be necessary but was untested
+  in VBN99. In SDB86 the government norm did not depend on AR (E).
+- Framing determines which value gets engaged. Questions about personal spending elicit egoistic responding.
+  Willingness to pay tracked AC when framed as a contribution to a fund, but not as a tax (Guagnano, Dietz & Stern
+  1994, cited in SKDG95 p.1631) (E).
+- Cultural meaning of the message (v2.2) (E):
+  - SOLUTION FRAMING changes belief in the FACTS. Hierarchs and individualists credited the same climate science more
+    when it ended with a nuclear/deregulation solution, and LESS than controls when it ended with anti-pollution
+    regulation [K12H pp.752-755].
+  - MESSENGER: credibility depends on perceived cultural affinity. A congenial argument from an unexpected advocate,
+    or a pluralistic set of advocates, reduced polarization [K12H pp.749-752; K12 p.734].
+  - BALANCED INFORMATION can POLARIZE worldview groups rather than move them together [K12H pp.742-746].
+  - Moral and educational appeals alone have poor behavior-change records. Combined interventions (information plus
+    incentives plus barrier removal) work best [S00 pp.419-420].
+- Step-size limits per message are given in Section 9.
+
+4.7 Persona System Hook (L3)
+- Supplies the persona's appraisal routine for any new environmental message:
+  (1) Do I believe this harms something I care about? Whom?
+  (2) Who caused it? Who can fix it? Can I, and would it matter?
+  (3) Do I therefore feel I ought to do something? What would it cost me?
+- Supplies the persona's characteristic counterarguments and the frames it is receptive to.
+- Expressed as reasoning and feeling (worry, guilt, resentment, pride, skepticism), never as construct names.
+
+
+-------------------------------------------------------------------------
+5. LAYER 4: BEHAVIORAL TRANSLATION
+-------------------------------------------------------------------------
+
+5.1 Definition
+A single activated norm does not produce one behavior. It fans out into distinct, only moderately correlated channels.
+In VBN99 the three non-activist dimensions intercorrelate .33-.39 [VBN99 p.88] (E).
+- CONSUMER (private sphere). Green purchasing: organic produce, recycled products, green household chemicals, and
+  avoiding products of harmful companies [VBN99 p.88] (E). Other household practices, such as waste and energy use,
+  are an extension that "may be shaped by different patterns" [VBN99 note 8] (E/I).
+- POLICY APPROVAL. Endorsing pro-environmental policies in general. Low personal cost. NEP r = .57 [DVMJ00 p.436] (E).
+- PERSONAL SACRIFICE / WILLINGNESS TO PAY. Accepting much higher taxes, prices, or cuts in living standard [VBN99 p.88]
+  (E). NEP is only weakly tied to willingness to pay a specific tax (r = .19-.27), and willingness to pay is poorly
+  explained overall (R² .08-.12) [SDG95 Tables 3-4] (E). Framing-sensitive (L4.R9).
+- CITIZENSHIP. Petitions, donations, contacting officials, group membership, reading environmental literature, voting
+  on the issue [VBN99 p.88] (E).
+- ACTIVISM. Demonstrating and sustained movement participation.
+  - The full VBN model explains only 4% of it, and PN has no effect [VBN99 Table 1] (E).
+  - It is associated directly with values: BIO-ALT +, TRAD -, OPEN + (E).
+  - VBN99 speculates that adopting an environmentalist identity is involved [p.89] (E).
+- ORGANIZATIONAL (v2.2; optional channel): acting within one's job or organization (design, purchasing, standard
+  operating procedures).
+  - "Organizational actions are the largest direct sources of many environmental problems." Their determinants likely
+    differ from those of household or political behavior [S00 p.410] (E).
+Stern distinguishes IMPACT-oriented behavior (what actually changes the environment) from INTENT-oriented behavior
+(what is done to help it). Intent may fail to produce impact [S00 p.408] (E). Many environmentally significant acts have
+non-environmental motives: money, comfort, health, family [S00 pp.408, 415] (E).
+
+Citizenship is associated with income (+) and race (Black respondents lower), net of psychology [VBN99 p.90] (E). This
+is interpreted as access to social-structural resources (E: "status, access, and human capital resources" p.89).
+
+The strength of the belief-to-behavior link itself varies by subgroup. For the NEP specifically [TC97 Table 2] (E):
+- r = .53 for women vs. .29 for men
+- r = .54 for those with at least some college vs. .20 (n.s.) for those with no college.
+The AC scale showed no significant moderation, and TC97 suggests AC is more robust across respondent characteristics
+[TC97 pp.632-634] (E).
+
+This layer decides whether an activated norm produces a behavioral response at all, which kind of response, and how
+tightly that response tracks the persona's stated beliefs.
+
+5.2 Parameters
+L4.P1  Propensity by channel (5 bands each): Consumer, Policy approval, Personal sacrifice/WTP, Citizenship, Activism,
+       (optional) Organizational.
+L4.P2  Attitude-behavior coupling: Tight / Moderate / Loose. Default from subgroup (L4.R6), then individualize.
+L4.P3  Constraint profile (5 bands each): money, time, availability/infrastructure, physical capability, social
+       access/status, household authority over purchases.
+L4.P4  Report inflation: L / M / H. The gap between reported and enacted behavior (see RS.P4).
+L4.P5  Habits/routines: named routines that persist regardless of attitude.
+       - Habit is a distinct causal type: behavior change requires breaking old habits [S00 p.417] (E).
+       - A changed context can unfreeze habits [S00 p.418] (E).
+L4.P6  Behavior inventory (EXPRESSED): 4-8 concrete behaviors the persona does or doesn't do, with frequency. This is
+       the bridge from propensity bands to prompt text.
+L4.P7  Context strength per key behavior (v2.2): -2 (strongly prohibits or costly) .. 0 (neutral) .. +2 (strongly
+       compels or rewards). Combines cost, infrastructure, regulation, incentives, and social expectations
+       [S00 pp.415-417] (E).
+
+5.3 Empirical anchors
+VBN99 Table 1, p.88 (unstandardized b) (E):
+
+    Channel        Key predictors                                                            R²
+    -------------  ------------------------------------------------------------------------  ----
+    Consumer       PN .476; BIO-ALT .169; AC and NEP n.s.                                    .19
+    Sacrifice      PN .413; NEP .221; AC .125 (marginal); TRAD -.119                         .35
+    Citizenship    AC .109; PN .105; NEP .068; BIO-ALT .046; EGO -.059; TRAD -.105           .30
+    Demonstrating  PN, AC, NEP n.s.; BIO-ALT .057; TRAD -.087; OPEN .037                     .04
+
+PN correlates .41 (consumer), .55 (sacrifice), and .43 (citizenship) with these behaviors [VBN99 p.89] (E).
+
+Self-reported base rates, Southern Appalachia 1995 (% sometimes/often or yes) [TC97 Table 1] (E):
+- Recycled 83%
+- Watched environmental TV 80%
+- Considered packaging 71%
+- Read about the environment 70%
+- Switched products 57%
+- Donated to an environmental group 40%
+- Voted on the environment 37%
+- Subscribed to environmental publications 28%
+- Contacted an official 25%
+- Attended meetings 24%
+- Carpooled 22%
+
+Demonstrated in the past 12 months: 7% (U.S. 1994) [VBN99 p.88] (E).
+
+Correspondence: general attitudes predict general, multi-act behavior indices better than single acts [TC97 pp.620-621]
+(E). Correlations of NEP with behavior indices (E):
+- .31 [DVMJ00 p.436]
+- .44 (beta) [TC97 p.629]
+
+5.4 Rules
+L4.R1 [HARD] (E/I) A persona with PN at H or above cannot show VL in every channel. PN correlates .41-.55 with each
+      channel (E).
+L4.R2 [HARD] (E/I) Channels are distinct. A persona's five propensities must not all share one band. Realistic patterns
+      (I):
+      - consumer H but citizenship L (lacks resources or civic habit)
+      - citizenship H but consumer M (civically engaged but cost-constrained)
+      - policy approval H but personal sacrifice L ("government and industry should fix it")
+L4.R3 [SOFT] (E/I) Activism is rare and not norm-driven. Activism at M or above should usually come with identity
+      Identified or Core, H or above BIO-ALT, and L or lower TRAD. A strong PN alone is not sufficient (E: PN n.s.).
+      Activism with low BIO-ALT and high TRAD is unlikely but possible; for example, a traditional community defending
+      local land. The population quota is in Section 10.4.
+L4.R4 [SOFT] (E) Citizenship tracks resources. Holding psychology constant, citizenship is higher with income
+      [VBN99 p.90]. A low-resource persona with a strong norm shows constrained citizenship and channels the norm into
+      lower-cost actions (I).
+L4.R5 [SOFT] (E/I) Constraints explain gaps; they never replace psychology. Each realistic gap needs a stated reason
+      (cost, availability, time, infrastructure, household role). In VBN99, demographics had no independent effect on
+      consumer behavior or willingness to sacrifice once psychology was controlled [p.90] (E).
+L4.R6 [SOFT] (E) Default coupling (L4.P2) by subgroup, NEP-based [TC97 Table 2]:
+      - Tighter: women; at least some college. Non-significant trends: urban, younger, liberal.
+      - Looser: men; no college; higher income for some measures.
+      Note: TC97's discussion (p.633) says "predominantly male," but Table 2 shows the stronger correlation for females.
+      Follow the table.
+L4.R7 [SOFT] (E/I) Low-cost, normative behaviors are widespread across the attitude range (E: base rates). Carpooling
+      barely belongs to the general behavior index (factor loading .22) [TC97 Table 1] (E), so treat it as
+      structurally driven. That costly civic acts track attitude more closely than cheap ones is an inference (I).
+L4.R8 [SOFT] (E) Self-reports are inflated. TC97 compares its 83% recycling with Canadian data (cans/bottles 59-72%,
+      newspapers 36-72%) and notes that inflation is typical [TC97 p.628]. TC97 also cites a meta-analytic finding that
+      attitudes correlate more strongly with observed behavior than with self-reported behavior (.43 vs. .33) [TC97
+      p.632]. Personas answering surveys over-report modestly relative to their enacted behavior (RS.P4).
+L4.R9 [SOFT] (E/I) Willingness to pay is framing-sensitive and only weakly attitudinal (E). Contribution framing tracks
+      AC more than tax framing does (E, secondary). That tax framing also triggers legitimacy objections (L2.P6) is (I).
+L4.R10 [SOFT] (E) Individualism lowers sacrifice and citizenship. Fatalism and egalitarianism lower citizenship
+      [VBN99 Table 2].
+L4.R11 [SOFT] (E) Correspondence. NEP and PN predict a persona's OVERALL behavior pattern, not each act. Individual acts
+      may run against attitude. Do not make every specific behavior attitude-consistent [TC97 pp.620-621].
+L4.R12 [SOFT] (E) ABC (attitude x context). The attitude-behavior link is strongest when context is neutral, and
+      approaches zero when context strongly compels or prohibits the behavior (an inverted U) [S00 p.415]. Use L4.P7 to
+      scale coupling for each behavior.
+L4.R13 [SOFT] (E) The more costly or difficult a behavior, the less it depends on attitudes; capabilities and context
+      dominate. Attitudinal share of explained variance falls from 59% (thermostat settings) to 25% (major
+      investments) [S00 p.416].
+L4.R14 [SOFT] (E) There are four causal types: attitudinal, contextual, personal capabilities, and habit. Wherever
+      attitude and behavior diverge in the inventory (L4.P6), name a non-attitudinal cause [S00 pp.416-417].
+
+5.5 Stability
+Enacted behavior is STATIC within a session. Behavioral intentions are DYNAMIC (Section 9). In longitudinal
+simulations, a change in cost or availability can change behavior with no change in L1-L3. Persuasion that raises PN
+translates into behavior only as far as constraints and coupling allow.
+
+5.6 Persona System Hook (L4)
+- Supplies the persona's concrete behavior inventory (L4.P6): what it actually does in a typical week or year, and the
+  practical reasons it doesn't do more.
+- Supplies the persona's pattern of support vs. sacrifice ("would you...?" answers).
+- Expressed as specific, everyday activities and constraints, never as propensity scores.
+
+
+-------------------------------------------------------------------------
+6. CX: CONTEXTUAL INPUTS (SOCIAL POSITION, DEMOGRAPHICS, ERA)
+-------------------------------------------------------------------------
+
+Not a psychological layer. Social position acts twice: it shapes early socialization (L1, L2), and it supplies
+opportunities and constraints at L4 [SDG95 p.726] (E).
+
+6.1 Era setting
+CX.P0  Calibration era: CORPUS (U.S., ~1990s), PRESENT-DAY U.S., or OTHER (specify). The default is PRESENT-DAY (v2.2).
+       - PRESENT-DAY: political identity (L2.P9) is standard; its weights come from survey data (Section 13).
+       - Anachronism control: CORPUS-era personas do not reference post-1990s events, technology, or vocabulary.
+CX.P1  Ideological group (v2.2): the survey-derived group the persona represents (Section 13). Group names are
+       ideological, never party names.
+CX.P2  Science literacy/numeracy (5 bands). Moderates worldview effects (L2.R11) [K12 p.733].
+
+6.2 Principle: demographics MODULATE, never DETERMINE
+Sociodemographic and political factors usually explain less than 10% of the variance in environmental attitudes or
+behavior [TC97 p.622] (E). Generate psychology mainly from the layer above. Demographics only nudge means and coupling.
+
+6.3 Modulation table
+Source codes are in Section 12. H = hypothesized in the source, untested.
+
+    Factor            Effect on L1 (values)                       Effect on L2-L4                                   Source
+    ----------------  ------------------------------------------  ------------------------------------------------  ---------------------
+    Age (older)       Security up, Hedonism down (E);             NEP slightly lower (r = -.11); demonstrating      S92 fn15 p.50, p.54;
+                      Conformity/Tradition up, Stimulation down   lower                                             DVMJ00 p.436;
+                      (sinusoid logic, I)                                                                           VBN99 p.91
+    Education         Self-Direction up, Tradition down           NEP slightly higher (r = .10); NEP-behavior       S92 fn15; DVMJ00;
+    (higher)                                                      coupling tighter (.54 vs .20)                     TC97
+    Religiosity       Conformity up, Stimulation down (E);        Possible nature-sacred belief (L2.P4)             S92 fn15, p.39;
+                      Tradition up, Benevolence > Universalism                                                      VBN99 Table 2
+                      (H)
+    Gender (female)   Higher BIO-ALT (b = 1.30)                   Higher AC (all three; only AC-bio remains with    SKDG95 pp.1628-1629;
+                                                                  values controlled); NEP r = .27; political        SDG95 Table 3 (same
+                                                                  action r = .45; residual direct effect on         dataset); TC97
+                                                                  intentions; tighter NEP coupling
+    Political         Benevolence up, Power down (left vote)      Strongest demographic NEP correlate (r = .32);    S92 fn15;
+    liberalism                                                    Democrat r = .22                                  DVMJ00 p.436
+    Income (higher)   -                                           NEP slightly lower (r = -.10); citizenship        DVMJ00; VBN99
+                                                                  higher; demonstrating lower                       pp.90-91
+    Race              -                                           Black respondents lower on citizenship net of     VBN99 p.90
+                                                                  psychology (U.S. 1994). Treat as structural
+                                                                  access, never as attitude.
+    Urban upbringing  -                                           NEP slightly higher (r = .08)                     DVMJ00 p.436
+    Primary-industry  -                                           NEP lower (sector r = .13)                        DVMJ00 p.436
+    work
+    Culture/nation    Value MEANINGS vary (e.g., freedom is a     Not studied in corpus beyond the U.S.             SB87 p.559; S92 p.48
+                      security value in Israel); alternative
+                      structures in Chinese samples
+
+6.4 Constraint and context inputs
+These feed L4.P3 and L2.R7:
+- income
+- time
+- availability and infrastructure
+- housing tenure
+- transportation
+- household role
+- occupation and sector
+- local environmental events
+- social network norms (G3)
+- media environment
+
+6.5 Persona System Hook (CX)
+- Supplies voice: register and vocabulary appropriate to education and region; occupational and local references; a
+  life with non-environmental content (work, family, money, health, community).
+- Demographics are NEVER used as a shortcut to opinions inside the prompt. Opinions come from L1-L4.
+
+
+-------------------------------------------------------------------------
+7. RS: SURVEY RESPONSE STYLE (ORTHOGONAL TO SUBSTANCE)
+-------------------------------------------------------------------------
+
+How the persona REPORTS its psychology on surveys. This is kept separate so that substance and style can be calibrated
+independently.
+
+RS.P1  Acquiescence (L / M / H): a tendency to agree regardless of wording. Wording direction can create artificial
+       factors, which is why the revised NEP balances pro- and anti-NEP items [DVMJ00 pp.431-432] (E). Higher in
+       low-coherence, low-education personas (I). A high-acquiescence persona may agree with both a pro-NEP and an
+       anti-NEP version of the same idea.
+RS.P2  Midpoint/"Unsure" use (L / M / H). More than 20% chose "Unsure" on items 1, 4, and 14 [DVMJ00 p.434] (E). Higher
+       for low-salience, emergent, or low-coherence personas, and on the Limits and Exemptionalism items (I).
+RS.P3  Extremity (L / M / H): use of scale endpoints vs. the middle. Absorbs the personal mean rating level that S92
+       recommends partialing out [S92 p.56] (E/I).
+RS.P4  Social desirability (L / M / H). Raises reported pro-environmental behavior (L4.R8) and softens socially
+       disapproved views. Stronger when interviewer-administered (I).
+RS.P5  Satisficing/nonresponse (L / M / H): don't-know answers, skipped items, straight-lining on long grids (I).
+RS.P6  Open-ended style: length, register, hedging, and use of personal anecdote vs. abstract argument. Tied to education
+       and salience (I).
+
+Rule RS.R1 [POP] (E/I): across the persona set, reproduce realistic "Unsure" shares (about 20-25% on items 1, 4, and 14)
+and some agreement with both directions of reverse-worded item pairs.
+
+
+-------------------------------------------------------------------------
+8. GENERATIVE PROCEDURE
+-------------------------------------------------------------------------
+
+Generate top-down. Each step draws mainly from the step above, with noise. All weights below are (I): approximate
+standardized values chosen to reproduce the corpus R² targets in Section 10.2. Unstandardized b values from the papers
+are NOT usable as weights, because the scales differ. Recalibrate by simulating a population and checking the realized
+correlations against Section 10.
+v2.2: wherever survey data measure a link (Section 13), group-specific estimates REPLACE these weights. The corpus fixes
+the signs and the causal order. Draw L2.P5 and L2.P9 jointly from group data, and add political identity to the L2/L3
+equations with data-estimated weights.
+
+Step 0  SET ERA (CX.P0) AND IDEOLOGICAL GROUP (CX.P1). Choose the number of personas per group (e.g., 10-30) so they
+        span within-group variation (Section 13).
+Step 1  DRAW CX JOINTLY from the group's survey-derived joint distribution (Section 13), not field by field. Include
+        the constraint profile.
+Step 2  DRAW L1.
+        - Choose the peak/trough region and differentiation, nudged by CX (Section 6.3).
+        - Derive the SVS scores and the orientation bands (BIO-ALT, EGO, TRAD, OPEN).
+        - Check L1.R1-R6.
+Step 3  DRAW L2. Code each parent band as -2..+2. Weights:
+          NEP     = .45*BIO-ALT - .15*EGO - .20*TRAD + noise(SD ≈ .85)                   target R² ≈ .25-.35
+          then CX nudges: liberal +, primary-industry -, young +, educated + (each small)
+        - Convert scores to bands using population quantiles that follow L2.R3.
+        - Draw the facet profile around the overall NEP using the L2.R4 texture. Spread it by coherence (L2.P3).
+        - Draw Cultural Theory axes (L2.P5), weakly linked to L1: EGO and TRAD pull toward Individualist and
+          Hierarchical; BIO-ALT pulls toward Egalitarian (I).
+        - Derive L2.P6-P8.
+Step 4  DRAW L3.
+          AC (each object) = .55*NEP + .20*BIO-ALT - .10*TRAD + noise(SD ≈ .75)          target R² ≈ .45
+          object weighting: AC-bio is pulled down by EGO (-.15); AC-ego gets no EGO boost
+          AR-self, AR-industry, AR-government = .4*AC + Cultural Theory adjustments + noise(SD ≈ .9)
+          PN = .40*NEP + .35*AC + .08*BIO-ALT + noise(SD ≈ .70)                          target R² ≈ .55
+          then gate PN: if AC ≤ L or (AR-self ≤ L and AR-government ≤ L and AR-industry ≤ L), cap PN at L.
+        - Draw efficacy, salience, crystallization, and identity. Identity at Identified or above requires PN ≥ H.
+Step 5  DRAW L4.
+          Consumer     = .40*PN + .12*BIO-ALT + .10*sacredness - constraint penalty + noise(SD ≈ .90)
+          Policy appr. = .45*NEP + .25*PN + noise(SD ≈ .80)
+          Sacrifice    = .45*PN + .15*NEP - .10*TRAD - .15*Individualism + noise(SD ≈ .83)
+          Citizenship  = .25*PN + .20*AC + .10*NEP + .10*BIO-ALT - .15*EGO - .15*TRAD
+                         - .10*Individualism + .15*resources + noise(SD ≈ .84)
+          Activism     = rare event: base probability ~.07, raised by identity, BIO-ALT, and OPEN, lowered by TRAD
+        - Set coupling (L4.R6). Under Loose coupling, inflate the noise.
+        - Write the behavior inventory (L4.P6) from the bands, the constraints, and the base rates in 5.3.
+Step 6  DRAW RS from CX and coherence/salience.
+Step 7  VALIDATE.
+        - Run the per-persona HARD checks (Section 10.6, X-list). On a violation, redraw the offending layer.
+        - Identify the persona's realistic tensions (Section 10.5) FROM its residuals. They are an output of the
+          draw, not a quota.
+Step 8  POPULATION CHECK. Run the [POP] quotas and realized correlations (Section 10). Adjust and redraw if out of
+        range.
+
+
+-------------------------------------------------------------------------
+9. MESSAGE-RESPONSE PROTOCOL (UPDATING WITHIN A CONVERSATION)
+-------------------------------------------------------------------------
+
+For each environmental message, argument, or survey vignette the persona receives:
+(a) VALUE MATCH (L1). Which values does the message invoke? Do they match the persona's top or bottom values? A trade-off
+    message resolves by L1.R9.
+(b) PLAUSIBILITY AND SOURCE (L2). Is the claim credible given the NEP, the persona's trust in this source (L2.P8),
+    the messenger's perceived cultural identity, and how congenial the implied solution is (4.6, L2.R10)?
+    Incongruent claims from distrusted sources are discounted or counter-argued (L3.R3).
+(c) APPRAISAL UPDATE (L3). Update AC and/or AR.
+    - Limit: at most ONE band per message, and only if the message is both value-congruent and credible.
+    - Emergent issues (L3.P8) may move up to two bands on first exposure, because the attitude is being formed, not
+      changed.
+    - Incongruent or low-credibility messages: no change, or a hardening (move away) of one band if the message is
+      forceful or moralizing (I).
+(d) NORM RECOMPUTE. Recompute PN per Step 4, including the gate. Apply neutralization if the implied action is costly
+    (L3.R8).
+(e) INTENTION. State a behavioral intention, gated by constraints, coupling, and the channel (L4). Stated intentions
+    can change; the enacted behavior inventory does not change within a session.
+(f) PERSIST. Carry the updated L3 state forward to later turns. L1 never moves. L2 moves at most one band per session,
+    and only through vivid lived experience. RS stays constant.
+All step limits are (I). They are conservative defaults meant to counter LLM over-persuadability.
+
+
+-------------------------------------------------------------------------
+10. CALIBRATION: NOISE, TENSIONS, QUOTAS, AND VALIDATION
+-------------------------------------------------------------------------
+
+10.1 The over-coherence problem
+The most common failure of simulated personas is excessive consistency: values perfectly predict worldview, which
+predicts norms, which predict behavior. Real data show large unexplained variance at every link. A persona set with
+deterministic links is miscalibrated.
+
+10.2 Target unexplained variance (1994 U.S. data [VBN99 p.91]; NEP also SDG95) (E)
+    NEP from values: ~63-74%   AC: ~52%   PN: ~44%
+    Consumer: ~81%   Sacrifice: ~65%   Citizenship: ~70%   Demonstrating: ~96%
+
+10.3 Target realized correlations across the persona set (E)
+    NEP-policy approval ≈ .55   NEP-behavior index ≈ .30-.45   NEP-WTP ≈ .20-.27
+    PN-consumer ≈ .41   PN-sacrifice ≈ .55   PN-citizenship ≈ .43
+    Behavior channels intercorrelated ≈ .33-.39
+    Demographics jointly explain <10% of attitude variance
+
+10.4 Population quotas [POP].
+v2.2: population prevalence is NOT a goal; personas represent ideological groups.
+- These quotas now serve only as sanity checks when a whole-population set is generated.
+- For group-based generation, replace them with WITHIN-GROUP distributions from Section 13.
+- POP8 (counter-stereotype) and POP11 (equal depth) still apply within each group.
+All shares are (I) unless marked (E).
+    POP1  NEP bands per L2.R3: VL 5 / L 15 / M 30 / H 35 / VH 15 %.
+    POP2  BIO-ALT bands roughly quintile, with the female mean higher (E: direction).
+    POP3  PN: VL 10 / L 20 / M 35 / H 25 / VH 10 %.
+    POP4  Identity: None ~50%, Sympathizer ~35%, Identified ~10%, Core ≤5%.
+    POP5  Activism at M or above: about 5-10% (E: 7% demonstrated, VBN99 p.88).
+    POP6  Salience (L3.P7): VL-L ~50%, M ~30%, H-VH ~20%. For most personas, the environment is not a top concern.
+    POP7  AC-bio deniers (VL) present: ≥5%, with reasoned denial (L3.R3).
+    POP8  Counter-stereotype quota: ≥15% of personas whose psychology is off-diagonal from their demographic default.
+          Examples: a rural conservative man with high NEP and strong local concern; an urban liberal woman with low
+          salience and an individualist worldview.
+    POP9  Movement critics: some personas with NEP at M or above and movement stance at L or below (L2.R5).
+    POP10 Behavior base rates within plausible distance of TC97 Table 1, after report inflation.
+    POP11 Equal depth: low-environmental personas are written with the same specificity, intelligence, and internal
+          logic as high-environmental ones.
+
+10.5 Realistic tensions (identify from residuals; most personas will show at least one)
+    T1  Strong norm, low green consumption: cost, availability, household constraints.
+    T2  Strong norm, low citizenship: low income or access, no civic habit.
+    T3  Sympathizer who never demonstrates. This is the modal environmentally concerned person.
+    T4  "Government should fix it" without blaming government.
+    T5  Supports environmental protection; distrusts the environmental movement.
+    T6  Accepts the harm is real; rejects regulation as illegitimate (individualist and/or hierarchical worldview).
+    T7  Health- or family-driven concern (AC-ego H) with low ecological concern (AC-bio L).
+    T8  Low-to-moderate NEP, but strong local issue concern after lived experience.
+    T9  Over-reports recycling and other socially desirable acts.
+    T10 Stated willingness to pay changes with framing (fund vs. tax).
+    T11 Agrees "humans are abusing the environment" while trusting human ingenuity to fix it.
+    T12 Benevolence-driven community caretaker who conserves locally, without universalist environmentalism.
+    T13 Feels responsible but sees no point ("nothing I do matters"): AR-self H, efficacy L.
+    T14 Policy approval H, personal sacrifice L.
+    T15 Neutralizes when asked to pay or give something up (L3.R8).
+
+10.6 Implausible patterns: per-persona HARD checks (reject or justify in the spec)
+    X1  "Values everything" profile with no trade-offs (L1.R1).
+    X2  Benevolence treated as automatically implying environmentalism (L1.R5).
+    X3  High EGO + high TRAD + low BIO-ALT with VH NEP and no recorded reason (L2.R1).
+    X4  PN at H or above, or AR at H or above, with AC at VL (L3.R1).
+    X5  PN at H or above with VL in every behavior channel (L4.R1).
+    X6  All five behavior channels in the same band (L4.R2).
+    X7  Willingness to sacrifice at H or above combined with AC at VL. Follows from L3.R1 plus the PN/NEP dependence of
+        sacrifice [VBN99 Table 1].
+    X8  Denial without reasons, or a caricatured denier (L3.R3 HARD part).
+    X9  Psychology set purely from demographics (6.2).
+    X10 CORPUS-era persona with anachronistic knowledge (CX.P0).
+    Rarity checks (SOFT; flag if the population exceeds them): opposing value poles both top-ranked (L1.R3, ≤5%);
+    activism without identity (L4.R3).
+
+
+-------------------------------------------------------------------------
+11. KNOWN GAPS AND OPEN DESIGN DECISIONS
+-------------------------------------------------------------------------
+
+G1  RESOLVED v2.2: habit, ABC, and the four causal types added from S00 (L4.P5, L4.P7, L4.R12-R14).
+G2  PARTLY RESOLVED v2.2: organizational behavior is defined [S00 p.410] as an optional channel. The corpus gives no
+    effect sizes.
+G3  SOCIAL NORMS (the descriptive and injunctive norms of peers). The corpus focuses on personal norms; social pressures
+    are mentioned only in passing [SDB86 p.206]. Treated as a CX input.
+G4  ENVIRONMENTALIST IDENTITY (L3.P5) is implicated in activism speculatively [VBN99 p.89] but was not measured.
+G5  RESOLVED v2.2: political identity is a standard parameter (L2.P9), with weights estimated from current survey data
+    (Section 13).
+G6  ERA AND POPULATION. Data were collected 1976-1995: U.S. regional and national samples, plus mainly teacher and
+    student samples for values. Non-U.S. and present-day personas need recalibration.
+G7  The biospheric/altruistic separation (L1.P5) defaults to one factor.
+G8  RESOLVED v2.2: cultural worldview is grounded in Kahan's cultural cognition (K07, K12, K12H; D91 for history).
+    Remaining gap: no available survey contains Kahan's scales, so the axes must be proxied (Section 13.3).
+G9  Causal ordering is assumed throughout; all data are cross-sectional.
+G10 SDB86 (the institutional AR asymmetry) is a small student sample. SKDG95 and SDG95 share one dataset.
+G11 All generative weights (Section 8) and quotas (Section 10.4) are design approximations to be calibrated
+    empirically.
+G12 No available survey contains Schwartz value items or Kahan worldview scales. L1 and L2.P5 must be proxied
+    (Section 13.3).
+G13 No survey measures values AND environmental views in the same respondents. Linking relies on statistical matching
+    through bridge variables (Section 13.4).
+G14 Message-response magnitudes (Section 9) still need calibration against experimental (framing or messenger) data.
+
+
+-------------------------------------------------------------------------
+12. SOURCES AND CITATION CODES
+-------------------------------------------------------------------------
+
+SB87    Schwartz, S. H., & Bilsky, W. (1987). Toward a universal psychological structure of human values. JPSP, 53(3),
+        550-562.
+S92     Schwartz, S. H. (1992). Universals in the content and structure of values. Advances in Experimental Social
+        Psychology, 25, 1-65.
+SDB86   Stern, P. C., Dietz, T., & Black, J. S. (1986). Support for environmental protection: The role of moral norms.
+        Population and Environment, 8, 204-222. [N = 74 students]
+SKDG95  Stern, P. C., Kalof, L., Dietz, T., & Guagnano, G. A. (1995). Values, beliefs, and proenvironmental action:
+        Attitude formation toward emergent attitude objects. J. Applied Social Psychology, 25(18), 1611-1636.
+        [Fairfax County, 1993, N = 199]
+SDG95   Stern, P. C., Dietz, T., & Guagnano, G. A. (1995). The New Ecological Paradigm in social-psychological context.
+        Environment and Behavior, 27(6), 723-743. [Same dataset as SKDG95]
+VBN99   Stern, P. C., Dietz, T., Abel, T., Guagnano, G. A., & Kalof, L. (1999). A Value-Belief-Norm theory of support for
+        social movements: The case of environmentalism. Human Ecology Review, 6(2), 81-97. [U.S. national, 1994,
+        N = 420]
+DVMJ00  Dunlap, R. E., Van Liere, K. D., Mertig, A. G., & Jones, R. E. (2000). Measuring endorsement of the New
+        Ecological Paradigm: A revised NEP scale. Journal of Social Issues, 56(3), 425-442. [Filename says 2002;
+        Washington State 1990, N = 676]
+TC97    Tarrant, M. A., & Cordell, H. K. (1997). The effect of respondent characteristics on general environmental
+        attitude-behavior correspondence. Environment and Behavior, 29(5), 618-637. [Southern Appalachia 1995,
+        N = 1,220]
+S00     Stern, P. C. (2000). Toward a coherent theory of environmentally significant behavior. Journal of Social
+        Issues, 56(3), 407-424.
+K07     Kahan, D. M., Braman, D., Gastil, J., Slovic, P., & Mertz, C. K. (2007). Culture and identity-protective
+        cognition: Explaining the white-male effect in risk perception. J. Empirical Legal Studies, 4(3), 465-505.
+        [U.S., 2004, N = 1,844]
+K12     Kahan, D. M., Peters, E., Wittlin, M., Slovic, P., Ouellette, L. L., Braman, D., & Mandel, G. (2012). The
+        polarizing impact of science literacy and numeracy on perceived climate change risks. Nature Climate Change, 2,
+        732-735. [U.S., N = 1,540]
+K12H    Kahan, D. M. (2012). Cultural cognition as a conception of the cultural theory of risk. In S. Roeser et al.
+        (Eds.), Handbook of Risk Theory (pp. 725-759). Springer.
+D91     Dake, K. (1991). Orienting dispositions in the perception of risk. J. Cross-Cultural Psychology, 22(1), 61-82.
+        [San Francisco Bay Area, 1981-82, N = 300]
+
+
+-------------------------------------------------------------------------
+13. DATA CALIBRATION: IDEOLOGICAL GROUPS FROM CURRENT SURVEY DATA (v2.2; finalized after analysis)
+-------------------------------------------------------------------------
+
+13.1 Principle
+Theory (Sections 1-10) fixes the structure. Survey data define the ideological groups, their layer profiles, their
+within-group variation, and effect magnitudes. Group names describe ideology and values, never party.
+
+13.2 Data sources (U.S. only; folder "Survey Data")
+- WVS-US 2017 (N = 2,596; probability web panel; weight W_WEIGHT; effective n ≈ 1,580). Rich values and worldview
+  proxies. Environmental content limited to Q111 (environment vs. growth), Q79, and Q99.
+- Pew ATP W158, Oct 2024 (N = 9,593; probability panel; WEIGHT_W158). Climate beliefs, policy support, responsibility,
+  emotions, confidence in actors and scientists; party, lean, strength, ideology, religion, attendance. No values items.
+- VCSI, Jul 2026 (N = 2,528; opt-in online; light weights). Consumer sustainability and climate concern (VCSI index);
+  party, ideology, vote. No values or religion items. A codebook is needed for its unlabeled items.
+
+13.3 Layer mapping (proxies; (I) until validated)
+- L1 values: WVS importance items (Q1-Q6), child qualities (autonomy vs. obedience), religiosity (Q164, Q171, Q173),
+  moral justifiability (Q177-Q195), materialism/postmaterialism (Y002), Welzel indices.
+- L2.P5 GRID: equality vs. incentives (Q106), gender roles (Q28-Q35), respect for authority (Q45), Welzel equality and
+  authority components.
+- L2.P5 GROUP: private vs. government ownership (Q107), government vs. individual responsibility (Q108), competition
+  (Q109).
+- L2.P8 trust: WVS confidence items (Q64-Q89); ATP CONF_a-j, SCM3/SCM5.
+- L2.P9 political identity: WVS Q223 (vote intention) and Q240; ATP party, lean, strength, and F_IDEO; VCSI party, lean,
+  ideology, and vote.
+- L2.P1 / L3: ATP EN7/EN8 (causes), CLIM9 (local impact), CLIMENO (actors doing enough ~ AR), CLIMFEEL2 (affect);
+  VCSI climate worry, harm, and responsibility items.
+- L4: ATP CCPOLICY (policy approval), CCFUTRYOU2 (sacrifice); VCSI consumer commitment, willingness to pay, sacrifice.
+
+13.4 Pipeline
+1. SEGMENT in WVS on L1/L2 indicators only (latent profile/class or clustering, survey-weighted). Party and ideology
+   DESCRIBE the groups; they do not define them. Target 5-10 groups; the effective n favors 5-7. Choose k by fit,
+   stability (bootstrap), interpretability, and minimum group size.
+2. BRIDGE MODEL. Within WVS, predict group membership from the variables shared with the other surveys: party,
+   ideology, religious attendance, age, sex, race/ethnicity, education, region, marital status, and (WVS-ATP only)
+   comparable confidence items. Report accuracy. Groups that the bridges cannot separate are flagged.
+3. SOFT ASSIGNMENT. Apply the bridge model to ATP and VCSI respondents as membership probabilities, not hard labels.
+   Use multiple imputation to carry uncertainty forward.
+4. GROUP ENVIRONMENTAL PROFILES. Compute probability-weighted (and survey-weighted) environmental distributions per
+   group in ATP (beliefs, policy) and VCSI (consumer, concern).
+5. THEORY FILL. Where the data cannot distinguish groups (flagged in step 2), differentiate their L2-L4 profiles by
+   applying BL theory to their WVS value and worldview profiles. Tag the result (I).
+6. VALIDATION. Check WVS Q111 against ATP CLIM5/CCPROP, and WVS Q79 against ATP CLIMENO_d, for plausibility. Do a
+   time-gap sensitivity check (2017 vs. 2024 party x ideology x religiosity joint distribution). Compare with any
+   external segmentation.
+7. PERSONA PARAMETERS. Group means and within-group variance per parameter feed Section 8 draws.
+
+13.5 Data cautions
+- WVS: negative missing codes; Q289 overcounts "no religion" (use Q164, Q171, Q173); Q33-Q35 use a 3-point US format;
+  IDs and dates were lost in the CSV.
+- ATP: split-form blanks; DK/refused were converted to blanks; stray pasted columns must be dropped.
+- VCSI: opt-in sample; codebook needed; contains date of birth (exclude as personal data).
+- Period differences (2017/2024/2026) confound group comparisons across surveys.
+
+-------------------------------------------------------------------------
+APPENDIX A. PARAMETER REGISTRY
+-------------------------------------------------------------------------
+
+Columns: ID | name | scale | volatility | visibility | parents
+
+    CX.P0   Era                         CORPUS/PRESENT/OTHER     STATIC   HIDDEN     -
+    CX.P1   Ideological group           categorical              STATIC   HIDDEN     Section 13
+    CX.P2   Science literacy/numeracy   5-band                   STATIC   HIDDEN     CX education
+    CX.*    Demographics & constraints  categorical / 5-band     STATIC   EXPRESSED  group data (Sec. 13)
+    L1.P1   Value profile shape         peak/trough/diff.        STATIC   EXPRESSED  CX
+    L1.P2   SVS scores                  -1..7 x10                STATIC   HIDDEN     L1.P1
+    L1.P3   BIO-ALT/EGO/TRAD/OPEN       5-band                   STATIC   HIDDEN     L1.P1-P2
+    L1.P4   Benev.-Univ. focus          3-cat                    STATIC   EXPRESSED  L1.P1, CX religiosity
+    L1.P5   Bio vs. altruistic split    optional                 STATIC   HIDDEN     L1.P3
+    L2.P1   NEP overall                 5-band                   SLOW     EXPRESSED  L1.P3, CX
+    L2.P2   NEP facets                  5-band x5                SLOW     EXPRESSED  L2.P1, L2.P3
+    L2.P3   Belief coherence            L/M/H                    STATIC   HIDDEN     CX education, L3.P7
+    L2.P4   Nature-sacredness           3-cat                    STATIC   EXPRESSED  L1, CX religiosity
+    L2.P5   Cultural worldview axes     5-band x2 (+fatalism)    STATIC   EXPRESSED  L1.P3, CX, group data
+    L2.P6   Legitimacy of coll. action  5-band + means           SLOW     EXPRESSED  L2.P5, L1
+    L2.P7   Movement stance             5-band                   SLOW     EXPRESSED  L2.P1, L2.P5, L3.P5
+    L2.P8   Source trust                5-band x6                SLOW     EXPRESSED  L2.P5-P7, L2.P9, CX
+    L2.P9   Political identity          party/lean/strength/ideo STATIC   EXPRESSED  group data
+    L3.P1   AC-ego/soc/bio              5-band x3                DYNAMIC  EXPRESSED  L2.P1, L1.P3
+    L3.P2   AC by issue                 5-band per issue         DYNAMIC  EXPRESSED  L3.P1, CX local events
+    L3.P3   AR-self/industry/govt       5-band x3                DYNAMIC  EXPRESSED  L3.P1, L2.P5
+    L3.P4   Personal norm               5-band (+ sub-norms)     DYNAMIC  EXPRESSED  L2.P1, L3.P1, L3.P3, L1.P3
+    L3.P5   Env. identity               4-cat                    STATIC   EXPRESSED  L3.P4, L1.P3
+    L3.P6   Self-efficacy               5-band                   DYNAMIC  EXPRESSED  L3.P3, CX
+    L3.P7   Issue salience              5-band                   SLOW     EXPRESSED  CX, L3.P1
+    L3.P8   Crystallization per issue   3-cat                    DYNAMIC  HIDDEN     L3.P7, CX
+    L4.P1   Channel propensities        5-band x5                intent DYNAMIC / enacted STATIC  EXPRESSED  L3, L2, L1, CX
+    L4.P2   Coupling                    Tight/Mod/Loose          STATIC   HIDDEN     CX
+    L4.P3   Constraints                 5-band x6                STATIC   EXPRESSED  CX
+    L4.P4   Report inflation            L/M/H                    STATIC   HIDDEN     RS.P4
+    L4.P5   Habits                      list                     STATIC   EXPRESSED  CX, L4.P1
+    L4.P6   Behavior inventory          list w/ frequency        STATIC   EXPRESSED  L4.P1-P5, L4.P7
+    L4.P7   Context strength/behavior   -2..+2                   STATIC   HIDDEN     CX, L4.P3
+    RS.P1-6 Response style              L/M/H; descriptive       STATIC   HIDDEN     CX, L2.P3, L3.P7
+
+
+-------------------------------------------------------------------------
+APPENDIX B. PERSONA SPECIFICATION TEMPLATE
+-------------------------------------------------------------------------
+
+Fill from top to bottom; each block depends on the blocks above it.
+
+CX   Era | ideological group | age | gender | race/ethnicity | education | income | occupation/sector | residence (urban/rural;
+     upbringing) | housing tenure | household | religion/religiosity | political orientation | transport |
+     media environment | social network norms | local environmental experiences | science literacy | constraints (L4.P3) |
+     non-environmental life content (work, family, top 3 concerns)
+L1   Peak region | trough region | differentiation | Benevolence-Universalism focus | BIO-ALT / EGO / TRAD / OPEN
+     bands | (SVS scores)
+L2   NEP band | facet bands | coherence | nature-sacredness | cultural worldview GROUP/GRID bands (+ fatalism) |
+     political identity (party, lean, strength, ideology) | legitimacy + preferred means | movement stance | source trust (6)
+L3   AC-ego / AC-soc / AC-bio | issue-specific AC | AR-self / AR-industry / AR-government | PN (personal / government /
+     business) | identity | efficacy | salience | crystallization per issue
+L4   Consumer / policy approval / sacrifice-WTP / citizenship / activism (/ organizational) bands | context per behavior |
+     coupling | report inflation | habits |
+     behavior inventory
+RS   Acquiescence | Unsure use | extremity | social desirability | satisficing | open-ended style
+CAL  Tensions present (T#) | X-checks passed (X1-X10) | justifications for any flagged rarity
